@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { Button } from "antd";
-import { AppContext } from "../lib/context";
+import { AppContext } from "@lib/context";
 import { useContext } from "react";
 
 const Title = styled.h1`
