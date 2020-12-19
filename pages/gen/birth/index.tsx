@@ -1,64 +1,111 @@
-import { useState } from 'react';
+import { useContext, useState } from "react";
 import styled from "styled-components";
-import { DatePicker, Button } from "antd";
+import { DatePicker, Button, Input } from "antd";
 import Layout from "@components/Layout";
-import { Moment } from 'moment';
-import { useRouter } from 'next/router';
-import LottoGenService from '@service/LottoGenService';
+import { Moment } from "moment";
+import { locale } from "@lib/locale";
+import { AppContext } from "@lib/context";
+import Axios from "axios";
+import Ball from "@components/Ball";
 
 const Wrapper = styled.div`
-  display : flex;
-  flex-direction : column;
-  .sectionName {
-      font-size : 2.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  & > * {
+    display: block;
+    width: 100%;
+    margin-bottom: 4px;
+    max-width: 300px;
   }
-  .sectionBody{
-    display : flex;
-    flex-direction : column;
+  .name {
+    font-size: 20px;
   }
-  @media only screen and (min-width: 768px){
+  .numbers {
+    margin: 20px 0;
   }
 `;
 
 export default function Birth() {
-    const [name, setName] = useState<string>("");
-    const [birthDate, setBirthDate] = useState<Moment | null>(null);
-    const handleDateChange = (date: Moment | null, dateString: string): void => {
-        setBirthDate(date);
-    }
-    const router = useRouter();
-    const submitForm = async () => {
-        try {
-            if (!name) {
-                alert("이름을 입력해주세요.");
-                return;
-            } else if (!birthDate) {
-                alert("생년월일을 선택해주세요.");
-                return;
-            }
-
-            const generatedNumbers: number[] = await LottoGenService.genNumbersByBirthDate(birthDate, name);
-            router.push({
-                pathname: '/result',
-                query: { generatedNumbers },
-            })
-        } catch (err) {
-            console.log(err);
+  const { appMessage } = useContext(AppContext);
+  const [name, setName] = useState("");
+  const [birthDate, setBirthDate] = useState<Moment | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [numbers, setNumbers] = useState<number[]>();
+  const genLottoNumber = () => {
+    if (name.length < 2)
+      return appMessage.warn("이름은 2글자 이상 입력해주세요.");
+    if (birthDate === null) return appMessage.warn("생년월일을 선택해주세요.");
+    setLoading(true);
+    Axios.post("/api/gen", { name, birth: birthDate.format("YYYY-MM-DD") })
+      .then(({ data }) => {
+        if (data.success) {
+          setNumbers(data.numbers);
+        } else {
+          appMessage.error(data.userMsg);
         }
-    }
+      })
+      .catch((err) => {
+        appMessage.error("서버 내부 에러");
+        console.error(err);
+      })
+      .finally(() => setLoading(false));
+  };
 
-    return (
-        <Layout>
-            <Wrapper>
-                <h1 className="sectionName">
-                    이름 / 생일로 만들기
-                </h1>
-                <div className="sectionBody">
-                    <input placeholder="이름" value={name} onChange={e => setName(e.target.value)} type="text" />
-                    <DatePicker onChange={handleDateChange} />
-                    <Button onClick={submitForm}>번호 생성</Button>
-                </div>
-            </Wrapper>
-        </Layout>
-    );
+  return (
+    <Layout pageTitle="이름 / 생일로 만들기">
+      <Wrapper>
+        {numbers ? (
+          <>
+            <span className="birth">
+              {birthDate?.format("YYYY년 MM월 DD일생")}
+            </span>
+            <span className="name">{name} 님의 번호</span>
+            <div className="numbers">
+              {numbers.map((number, index) => (
+                <Ball key={index} number={number} />
+              ))}
+            </div>
+            <Button
+              size="large"
+              onClick={() => {
+                setBirthDate(null);
+                setName("");
+                setNumbers(undefined);
+              }}
+              type="primary"
+            >
+              다시하기
+            </Button>
+          </>
+        ) : (
+          <>
+            <Input
+              size="large"
+              placeholder="이름"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              disabled={loading}
+            />
+            <DatePicker
+              size="large"
+              locale={locale}
+              onChange={(value) => setBirthDate(value)}
+              placeholder="생년월일 선택"
+              disabled={loading}
+            />
+            <Button
+              size="large"
+              type="primary"
+              onClick={genLottoNumber}
+              loading={loading}
+            >
+              번호 생성
+            </Button>
+          </>
+        )}
+      </Wrapper>
+    </Layout>
+  );
 }
