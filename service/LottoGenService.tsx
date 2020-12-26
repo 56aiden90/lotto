@@ -1,16 +1,7 @@
 import ApiService from "./ApiService";
 import { Moment } from "moment";
 
-const a = {
-    aabb: 123,
-    b: 23,
-};
-
 class LottoGenService extends ApiService {
-    constructor() {
-        super();
-        console.log("LottoGenService created.");
-    }
     genNumbersByQuote(quote: string): number[] | PromiseLike<number[]> {
         // return new Promise(resolve => resolve([1, 2, 3, 4, 5, 6]));
         if (quote == null) {
