@@ -28,7 +28,7 @@ const Main = styled.main`
 
 const Layout = ({
   title = "육성장군",
-  pageTitle = "제목 없음",
+  pageTitle = "육성 장군",
   mainStyle,
   header,
   ...props

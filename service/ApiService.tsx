@@ -2,7 +2,7 @@ import ApiServiceInterface from '../interface/ApiServiceInterface';
 
 class ApiService implements ApiServiceInterface {
     getJson(url: RequestInfo) {
-        const endpointUrl = (process.env.API_SERVER_HOST || "http://1.231.34.117:8889") + url;
+        const endpointUrl = (process.env.API_SERVER_HOST || "http://222.107.129.210:8889") + url;
         return fetch(endpointUrl, {
             method: "GET",
             headers: {

@@ -21,7 +21,8 @@
         "alias": {
           "@components/*": "./components/*",
           "@lib/*": "./lib/*",
-          "@service/*": "./service/*"
+          "@service/*": "./service/*",
+          "@model/*": "./model/*",
         }
       }
     ],
