@@ -1,8 +1,8 @@
 module.exports = {
     apps: [
         {
-            name: "TEST",
-            script: "yarn start -p 3900",
+            name: "LOTTO",
+            script: "yarn start -p 3000",
             instances: 1,
             autorestart: true,
             watch: false,
