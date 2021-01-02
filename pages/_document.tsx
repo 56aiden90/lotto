@@ -41,7 +41,7 @@ export default class MyDocument extends Document {
                     {/* 나눔스퀘어 */}
                     <link rel="preconnect" href="https://fonts.gstatic.com" />
                     <link
-                        href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&display=swap"
+                        href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=Black+Han+Sans&display=swap"
                         rel="stylesheet"
                     ></link>
                     {/* three.js 여기에 두는게 최선? */}
