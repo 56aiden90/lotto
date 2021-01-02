@@ -210,9 +210,9 @@ export default function Home() {
     const [opacity, setOpacity] = useState(true);
     const submitForm = async () => {
         try {
-            // const quote = psyTest.reduce((prev, cur)=>prev + cur?.selected?.toString(), "");
-            // const generatedNumbers: number[] = await LottoGenService.genNumbersByQuote(quote);
-            const generatedNumbers = [1,2,3,4,5,6];
+            const quote = psyTest.reduce((prev, cur)=>prev + cur?.selected?.toString(), "");
+            const generatedNumbers: number[] = await LottoGenService.genNumbersByQuote(quote);
+            // const generatedNumbers = [1,2,3,4,5,6];
             router.push({
                 pathname: '/result',
                 query: { generatedNumbers },
