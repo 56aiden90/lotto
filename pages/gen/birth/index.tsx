@@ -9,7 +9,7 @@ import Axios from "axios";
 import Ball from "@components/Ball";
 import { useRouter } from "next/router";
 import querystring from "querystring";
-import { BirthResult } from "@lib/types";
+import { RESULT_TYPE } from "@lib/enums";
 const Wrapper = styled.div`
     display: flex;
     flex-direction: column;
@@ -49,9 +49,9 @@ const Birth = () => {
                     const qs = querystring.stringify({
                         name,
                         birth,
-                        type: "birth",
+                        type: RESULT_TYPE.BIRTH,
                         numbers: data.numbers,
-                    } as BirthResult);
+                    });
                     console.log(qs);
                     router.push("/result?" + qs);
                     setNumbers(data.numbers);

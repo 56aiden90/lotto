@@ -1,3 +1,5 @@
+import {RESULT_TYPE} from './enums';
+
 type ApiSuccessResponse = {
     [propName: string]: any;
     success: true;
@@ -9,23 +11,26 @@ type ApiFailResponse = {
     userMsg: string;
 };
 export type ApiResponse = ApiSuccessResponse | ApiFailResponse;
-
-export type BirthResult = {
-    type: "birth";
+export interface NumGenResult{
+  type : RESULT_TYPE;
+}
+export interface BirthResult extends NumGenResult{
+    type: RESULT_TYPE.BIRTH;
     numbers: number[];
     birth: string;
     name: string;
 };
-export type PsyResult = {
-    type: "psy";
+export interface PsyResult extends NumGenResult {
+    type: RESULT_TYPE.PSY;
     numbers: number[];
 };
-export type QuoteResult = {
-    type: "quote";
+export interface QuoteResult extends NumGenResult {
+    type: RESULT_TYPE.QUOTE;
     numbers: number[];
     quote: string;
 };
+
 export type ErrorResult = {
-    type: "error";
+    type: RESULT_TYPE.ERROR;
 };
 export type LottoResult = BirthResult | PsyResult | QuoteResult | ErrorResult;
