@@ -27,6 +27,10 @@ const Wrapper = styled.div`
     .numbers {
         margin: 20px 0;
     }
+    .sectionName {
+        font-size: 2.5rem;
+        margin-bottom : 0;
+    }
 `;
 
 const Birth = () => {
@@ -67,8 +71,9 @@ const Birth = () => {
     };
 
     return (
-        <Layout pageTitle="이름 / 생일로 만들기">
+        <Layout pageTitle="육성장군">
             <Wrapper>
+                <h1 className="sectionName">이름 / 생일로 만들기</h1>
                 {numbers ? (
                     <>
                         <span className="birth">
@@ -97,31 +102,31 @@ const Birth = () => {
                         </Button>
                     </>
                 ) : (
-                    <>
-                        <Input
-                            size="large"
-                            placeholder="이름"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            disabled={loading}
-                        />
-                        <DatePicker
-                            size="large"
-                            locale={locale}
-                            onChange={(value) => setBirthDate(value)}
-                            placeholder="생년월일 선택"
-                            disabled={loading}
-                        />
-                        <Button
-                            size="large"
-                            type="primary"
-                            onClick={genLottoNumber}
-                            loading={loading}
-                        >
-                            번호 생성
+                        <>
+                            <Input
+                                size="large"
+                                placeholder="이름"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                disabled={loading}
+                            />
+                            <DatePicker
+                                size="large"
+                                locale={locale}
+                                onChange={(value) => setBirthDate(value)}
+                                placeholder="생년월일 선택"
+                                disabled={loading}
+                            />
+                            <Button
+                                size="large"
+                                type="primary"
+                                onClick={genLottoNumber}
+                                loading={loading}
+                            >
+                                번호 생성
                         </Button>
-                    </>
-                )}
+                        </>
+                    )}
             </Wrapper>
         </Layout>
     );

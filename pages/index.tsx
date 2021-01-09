@@ -45,9 +45,6 @@ export default function Home() {
                 <Link href="/gen/psychology-test">
                     <Button size="large">심리테스트로 로또번호생성</Button>
                 </Link>
-                <Link href="/gen/psychology-test">
-                    <Button size="large">장군추천 로또번호생성</Button>
-                </Link>
             </Wrapper>
         </Layout>
     );
