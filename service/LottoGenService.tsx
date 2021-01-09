@@ -3,7 +3,6 @@ import { Moment } from "moment";
 
 class LottoGenService extends ApiService {
     genNumbersByQuote(quote: string): number[] | PromiseLike<number[]> {
-        // return new Promise(resolve => resolve([1, 2, 3, 4, 5, 6]));
         if (quote == null) {
             throw new Error("Invalid quote");
         }
@@ -12,8 +11,7 @@ class LottoGenService extends ApiService {
     genNumbersByBirthDate(
         birthDate: Moment | null,
         name: string | null,
-    ): Promise<any> {
-        // return new Promise(resolve => resolve([1, 2, 3, 4, 5, 6]));
+    ): PromiseLike<any> {
         if (birthDate == null) {
             throw new Error("Invalid birthDate");
         }
