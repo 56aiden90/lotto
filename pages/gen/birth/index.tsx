@@ -28,7 +28,7 @@ const Wrapper = styled.div`
     }
 `;
 
-export default function Birth() {
+const Birth = () => {
     const router = useRouter();
     const { appMessage } = useContext(AppContext);
     const [name, setName] = useState("");
@@ -117,4 +117,5 @@ export default function Birth() {
             </Wrapper>
         </Layout>
     );
-}
+};
+export default Birth;

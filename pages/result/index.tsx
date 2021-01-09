@@ -1,26 +1,7 @@
 import { GetServerSideProps } from "next";
 import Ball from "@components/Ball";
 import styled from "styled-components";
-
-type BirthResult = {
-    type: "birth";
-    numbers: number[];
-    birth: string;
-    name: string;
-};
-type PsyResult = {
-    type: "psy";
-    numbers: number[];
-};
-type QuoteResult = {
-    type: "quote";
-    numbers: number[];
-    quote: string;
-};
-type ErrorResult = {
-    type: "error";
-};
-type LottoResult = BirthResult | PsyResult | QuoteResult | ErrorResult;
+import { BirthResult, LottoResult, PsyResult, QuoteResult } from "@lib/types";
 
 const Wrapper = styled.div`
     display: flex;
