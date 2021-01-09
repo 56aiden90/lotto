@@ -6,6 +6,7 @@ import { Moment } from 'moment';
 import { useRouter } from 'next/router';
 import LottoGenService from '@service/LottoGenService';
 import Ball from '@components/Ball';
+import { RESULT_TYPE } from '@lib/enums';
 
 const Wrapper = styled.div`
   display : flex;
@@ -48,11 +49,14 @@ export default function Home() {
                 alert("문구를 입력해주세요.")
                 return;
             }
-            const generatedNumbers: number[] = await LottoGenService.genNumbersByQuote(quote);
-            console.log("generatedNumbers", generatedNumbers);
+            const numbers: number[] = await LottoGenService.genNumbersByQuote(quote);
             router.push({
                 pathname: '/result',
-                query: { generatedNumbers },
+                query: {
+                    numbers,
+                    type: RESULT_TYPE.QUOTE,
+                    quote : quote
+                },
             })
         } catch (err) {
             console.log(err);
@@ -73,7 +77,7 @@ export default function Home() {
                         value={quote}
                         maxLength={100}
                         onChange={e => setQuote(e.target.value)}
-                        />
+                    />
                     <Button
                         className="gen-button"
                         size="large"

@@ -19,7 +19,7 @@ const Wrapper = styled.div`
         display: block;
         width: 100%;
         margin-bottom: 4px;
-        max-width: 400px;
+        max-width: 300px;
     }
     .name {
         font-size: 20px;

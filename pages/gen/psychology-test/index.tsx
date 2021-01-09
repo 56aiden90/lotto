@@ -5,6 +5,8 @@ import Layout from "@components/Layout";
 import { useRouter } from "next/router";
 import LottoGenService from "@service/LottoGenService";
 import Question from "@model/Question";
+import { RESULT_TYPE } from "@lib/enums";
+import { PsyResult } from "@lib/types";
 
 const Wrapper = styled.div`
     display: flex;
@@ -209,12 +211,16 @@ export default function Home() {
     const submitForm = async () => {
         try {
             const quote = psyTest.reduce((prev, cur) => prev + cur?.selected?.toString(), "");
-            const generatedNumbers: number[] = await LottoGenService.genNumbersByQuote(quote);
+            const numbers: number[] = await LottoGenService.genNumbersByQuote(quote);
             router.push({
                 pathname: "/result",
-                query: { generatedNumbers },
+                query: {
+                    numbers,
+                    type : RESULT_TYPE.PSY
+                },
             });
         } catch (err) {
+            alert("번호 생성 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.")
             console.log(err);
         }
     };
