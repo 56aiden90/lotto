@@ -4,6 +4,7 @@ import styled from "styled-components";
 import { BirthResult, LottoResult, PsyResult, QuoteResult } from "@lib/types";
 import { RESULT_TYPE } from "@lib/enums";
 import { ParsedUrlQuery } from "querystring";
+import ShareButton from "@components/ShareButton";
 
 const Wrapper = styled.div`
     display: flex;
@@ -48,6 +49,7 @@ const Result = (result: LottoResult) => {
                         <Ball key={index} delay={index * 100} number={n}></Ball>
                     ))}
                 </div>
+                <ShareButton />
             </Wrapper>
         );
     }
@@ -59,14 +61,6 @@ export const getServerSideProps: GetServerSideProps<LottoResult | ParsedUrlQuery
     try {
         if (ctx.query.type === RESULT_TYPE.BIRTH) {
             const { birth, name, numbers } = ctx.query;
-            console.log({
-                props: {
-                    type: RESULT_TYPE.BIRTH,
-                    name,
-                    birth,
-                    numbers: (numbers as string[]).map((n) => Number(n)),
-                } as BirthResult,
-            });
             return {
                 props: {
                     type: RESULT_TYPE.BIRTH,
