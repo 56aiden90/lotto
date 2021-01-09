@@ -8,7 +8,8 @@ import { AppContext } from "@lib/context";
 import Axios from "axios";
 import Ball from "@components/Ball";
 import { useRouter } from "next/router";
-
+import querystring from "querystring";
+import { BirthResult } from "@lib/types";
 const Wrapper = styled.div`
     display: flex;
     flex-direction: column;
@@ -45,7 +46,14 @@ const Birth = () => {
         Axios.post("/api/gen", { name, birth })
             .then(({ data }) => {
                 if (data.success) {
-                    router.push("/result");
+                    const qs = querystring.stringify({
+                        name,
+                        birth,
+                        type: "birth",
+                        numbers: data.numbers,
+                    } as BirthResult);
+                    console.log(qs);
+                    router.push("/result?" + qs);
                     setNumbers(data.numbers);
                 } else {
                     appMessage.error(data.userMsg);

@@ -31,37 +31,19 @@ const Result = (result: LottoResult) => {
                 <h1 className="title">잘못된 접근입니다.</h1>
             </Wrapper>
         );
-    } else if (result.type === "birth") {
-        return (
-            <Wrapper>
-                <h1 className="title">
-                    {result.birth}년생 {result.name}님의 추천번호
-                </h1>
-                <div className="ballWrapper">
-                    {result.numbers.map((n, index) => (
-                        <Ball delay={index * 100} number={n * 10}></Ball>
-                    ))}
-                </div>
-            </Wrapper>
-        );
-    } else if (result.type === "psy") {
-        return (
-            <Wrapper>
-                <h1 className="title">추천 로또번호</h1>
-                <div className="ballWrapper">
-                    {result.numbers.map((n, index) => (
-                        <Ball delay={index * 100} number={n * 10}></Ball>
-                    ))}
-                </div>
-            </Wrapper>
-        );
     } else {
+        const title =
+            result.type === "birth"
+                ? `${result.birth}년생 ${result.name}님의 추천번호`
+                : result.type === "psy"
+                ? "심리테스트 추천 로또번호"
+                : `${result.quote} 글귀 로또번호`;
         return (
             <Wrapper>
-                <h1 className="title">추천 로또번호</h1>
+                <h1 className="title">{title}</h1>
                 <div className="ballWrapper">
                     {result.numbers.map((n, index) => (
-                        <Ball delay={index * 100} number={n * 10}></Ball>
+                        <Ball key={index} delay={index * 100} number={n}></Ball>
                     ))}
                 </div>
             </Wrapper>
@@ -75,6 +57,14 @@ export const getServerSideProps: GetServerSideProps<LottoResult> = async (
     try {
         if (ctx.query.type === "birth") {
             const { birth, name, numbers } = ctx.query;
+            console.log({
+                props: {
+                    type: "birth",
+                    name,
+                    birth,
+                    numbers: (numbers as string[]).map((n) => Number(n)),
+                } as BirthResult,
+            });
             return {
                 props: {
                     type: "birth",
