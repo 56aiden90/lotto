@@ -2,23 +2,20 @@ import ApiServiceInterface from '../interface/ApiServiceInterface';
 
 class ApiService implements ApiServiceInterface {
     getJson(url: RequestInfo) {
-        const endpointUrl = (process.env.API_SERVER_HOST || "http://3.34.234.132:3001") + url;
+        const endpointUrl = (process.env.API_SERVER_HOST || "https://lotto-api.superposition.link") + url;
         return fetch(endpointUrl, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
                 "passwd": "gworld"
             }
-        }).then(res => {
+        }).then(async res => {
+            const responseBody = await res.json();
             if (res.status !== 200) {
-                return res.json().then(json => {
-                    throw new Error(json)
-                });
+                throw new Error(responseBody);
             }
-            return res.json();
-        }).then(responseBody => {
-            return responseBody
-        })
+            return responseBody;
+        });
     }
 
     postJson(url: RequestInfo, requestBody: RequestInit) {
@@ -27,17 +24,15 @@ class ApiService implements ApiServiceInterface {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
-            }
-        }).then(res => {
+            },
+            body : JSON.stringify(requestBody),
+        }).then(async res => {
+            const responseBody = await res.json();
             if (res.status !== 200) {
-                return res.json().then(json => {
-                    throw new Error(json)
-                });
+                throw new Error(responseBody);
             }
-            return res.json();
-        }).then(responseBody => {
             return responseBody;
-        })
+        });
     }
 }
 

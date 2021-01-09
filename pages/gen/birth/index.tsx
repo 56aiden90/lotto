@@ -47,21 +47,17 @@ const Birth = () => {
             return appMessage.warn("생년월일을 선택해주세요.");
         setLoading(true);
         const birth = birthDate.format("YYYY-MM-DD");
-        Axios.post("/api/gen", { name, birth })
+        Axios.post("https://lotto-api.superposition.link/main", { name, birth })
             .then(({ data }) => {
-                if (data.success) {
                     const qs = querystring.stringify({
                         name,
                         birth,
                         type: RESULT_TYPE.BIRTH,
-                        numbers: data.numbers,
+                        numbers: data.res,
                     });
                     console.log(qs);
                     router.push("/result?" + qs);
-                    setNumbers(data.numbers);
-                } else {
-                    appMessage.error(data.userMsg);
-                }
+                    setNumbers(data.res);
             })
             .catch((err) => {
                 appMessage.error("서버 내부 에러");
