@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import styled, { keyframes } from "styled-components";
 import { Radio, Button } from "antd";
 import Layout from "@components/Layout";
@@ -45,14 +45,6 @@ const Wrapper = styled.div`
             margin: 5px;
         }
     }
-    .show {
-        opacity: 1;
-        transition: all 0.3s ease-in-out;
-    }
-    .hide {
-        opacity: 0;
-        transition: all 0.3s ease-in-out;
-    }
     .navWrapper {
         margin-top: 10px;
         display: flex;
@@ -73,9 +65,7 @@ const Wrapper = styled.div`
                 position: relative;
                 top: 1px;
             }
-            &:hover{
-                cursor : pointer;
-            }
+            cursor : pointer;
         }
     }
     @media only screen and (min-width: 768px) {
@@ -207,12 +197,23 @@ export default function Home() {
     const router = useRouter();
     const [psyTest, setPsyTest] = useState(mockTest);
     const [questionId, setQuestionId] = useState(psyTest[0].id);
-    const [opacity, setOpacity] = useState(true);
+    const selectElement = useRef<HTMLDivElement>(null);
+    const animationTiming = {
+        duration: 300,
+    }
+    const fadeInAnimation = [
+        { opacity: 0 },
+        { opacity: 1 }
+    ];
+    const fadeOutAnimation = [
+        { opacity: 1 },
+        { opacity: 0 }
+    ];
+
     const submitForm = async () => {
         try {
-            const quote = psyTest.reduce((prev, cur)=>prev + cur?.selected?.toString(), "");
+            const quote = psyTest.reduce((prev, cur) => prev + cur?.selected?.toString(), "");
             const generatedNumbers: number[] = await LottoGenService.genNumbersByQuote(quote);
-            // const generatedNumbers = [1,2,3,4,5,6];
             router.push({
                 pathname: '/result',
                 query: { generatedNumbers },
@@ -221,6 +222,47 @@ export default function Home() {
             console.log(err);
         }
     };
+
+    const renderQuestionNav = () => {
+        const question: Question | undefined = psyTest.find(q => q.id === questionId);
+        return (
+            <div className="navWrapper">
+                {questionId === psyTest[0].id ? (
+                    <div />
+                ) : (
+                        <div
+                            onClick={() => {
+                                selectElement?.current?.animate(fadeInAnimation, animationTiming);
+                                setQuestionId(questionId - 1);
+                            }}
+                            className="prevBtn navBtn"
+                        >
+                            <span>이전</span>
+                        </div>
+                    )}
+                {questionId === psyTest[psyTest.length - 1].id ? (
+                    <div
+                        className="nextBtn navBtn"
+                        onClick={submitForm}>
+                        <span>결과 보기</span>
+                    </div>
+                ) : (
+                        <div
+                            onClick={() => {
+                                if (!question?.selected || typeof question?.selected === 'undefined') {
+                                    alert("답변을 골라주세요.")
+                                    return;
+                                }
+                                selectElement?.current?.animate(fadeInAnimation, animationTiming);
+                                setQuestionId(questionId + 1);
+                            }}
+                            className="nextBtn navBtn"
+                        >
+                            <span>다음</span>
+                        </div>
+                    )}
+            </div>)
+    }
 
     const renderQuestion = () => {
         return psyTest.map((question, index) => {
@@ -241,7 +283,7 @@ export default function Home() {
                 <div className="questionWrapper">
                     <p className="question-title">{question.title}</p>
                     <Radio.Group
-                        className={`question ${opacity ? "show" : "hide"}`}
+                        className={`question`}
                         options={question.options}
                         onChange={onChange}
                         value={question.selected}
@@ -249,48 +291,6 @@ export default function Home() {
                         buttonStyle="solid"
                         size="large"
                     />
-                    <div className="navWrapper">
-                        {questionId === psyTest[0].id ? (
-                            <div />
-                        ) : (
-                            <div
-                                onClick={() => {
-                                    setOpacity(false);
-                                    setQuestionId(questionId - 1);
-                                    setTimeout(() => {
-                                        setOpacity(true);
-                                    }, 0);
-                                }}
-                                className="prevBtn navBtn"
-                            >
-                                <span>이전</span>
-                            </div>
-                        )}
-                        {questionId === psyTest[psyTest.length - 1].id ? (
-                            <div
-                            className="nextBtn navBtn"
-                            onClick={submitForm}>
-                                <span>결과 보기</span>
-                            </div>
-                        ) : (
-                            <div
-                                onClick={() => {
-                                    if(!question.selected || typeof question.selected === 'undefined'){
-                                        alert("답변을 골라주세요.")
-                                        return;
-                                    }
-                                    setOpacity(false);
-                                    setQuestionId(questionId + 1);
-                                    setTimeout(() => {
-                                        setOpacity(true);
-                                    }, 0);
-                                }}
-                                className="nextBtn navBtn"
-                            >
-                                <span>다음</span>
-                            </div>
-                        )}
-                    </div>
                 </div>
             );
         });
@@ -300,7 +300,8 @@ export default function Home() {
         <Layout>
             <Wrapper>
                 <h1 className="sectionName">심리테스트로 만들기</h1>
-                <div className="form">{renderQuestion()}</div>
+                <div ref={selectElement} className="form">{renderQuestion()}</div>
+                {renderQuestionNav()}
             </Wrapper>
         </Layout>
     );
