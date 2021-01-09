@@ -19,6 +19,7 @@ const Wrapper = styled.div`
     .ballWrapper {
         display: flex;
         justify-content: center;
+        margin-bottom : 20px;
     }
     .title {
         font-size: 2rem;
