@@ -45,7 +45,7 @@ const Birth = () => {
             return appMessage.warn("이름은 2글자 이상 입력해주세요.");
         if (birthDate === null)
             return appMessage.warn("생년월일을 선택해주세요.");
-        setLoading(true);
+        // setLoading(true);
         const birth = birthDate.format("YYYY-MM-DD");
         Axios.get(`https://lotto-api.superposition.link/main?string=${encodeURIComponent(name + birth)}`,{
             headers :{
@@ -67,7 +67,7 @@ const Birth = () => {
                 appMessage.error("서버 내부 에러");
                 console.error(err);
             })
-            .finally(() => setLoading(false));
+            // .finally(() => setLoading(false));
     };
 
     return (
