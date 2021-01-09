@@ -1,3 +1,6 @@
+// script 로 실행하는 법
+// pm2 start yarn --interpreter bash --name api -- start -p 3100
+
 module.exports = {
     apps: [
         {
