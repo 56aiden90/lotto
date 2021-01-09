@@ -46,7 +46,7 @@ const Result = (result: LottoResult) => {
                 <h1 className="title">{title}</h1>
                 <div className="ballWrapper">
                     {result.numbers.map((n, index) => (
-                        <Ball key={index} delay={index * 100} number={n}></Ball>
+                        <Ball key={index} delay={300 + index * 100} number={n}></Ball>
                     ))}
                 </div>
                 <ShareButton />
