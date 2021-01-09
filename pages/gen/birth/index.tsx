@@ -47,7 +47,11 @@ const Birth = () => {
             return appMessage.warn("생년월일을 선택해주세요.");
         setLoading(true);
         const birth = birthDate.format("YYYY-MM-DD");
-        Axios.get(`https://lotto-api.superposition.link/main?string=${encodeURIComponent(name + birth)}`)
+        Axios.get(`https://lotto-api.superposition.link/main?string=${encodeURIComponent(name + birth)}`,{
+            headers :{
+                passwd : 'gworld'
+            }
+        })
             .then(({ data }) => {
                     const qs = querystring.stringify({
                         name,
