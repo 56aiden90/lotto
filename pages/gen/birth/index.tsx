@@ -7,6 +7,7 @@ import { locale } from "@lib/locale";
 import { AppContext } from "@lib/context";
 import Axios from "axios";
 import Ball from "@components/Ball";
+import { useRouter } from "next/router";
 
 const Wrapper = styled.div`
     display: flex;
@@ -28,6 +29,7 @@ const Wrapper = styled.div`
 `;
 
 export default function Birth() {
+    const router = useRouter();
     const { appMessage } = useContext(AppContext);
     const [name, setName] = useState("");
     const [birthDate, setBirthDate] = useState<Moment | null>(null);
@@ -39,9 +41,11 @@ export default function Birth() {
         if (birthDate === null)
             return appMessage.warn("생년월일을 선택해주세요.");
         setLoading(true);
-        Axios.post("/api/gen", { name, birth: birthDate.format("YYYY-MM-DD") })
+        const birth = birthDate.format("YYYY-MM-DD");
+        Axios.post("/api/gen", { name, birth })
             .then(({ data }) => {
                 if (data.success) {
+                    router.push("/result");
                     setNumbers(data.numbers);
                 } else {
                     appMessage.error(data.userMsg);

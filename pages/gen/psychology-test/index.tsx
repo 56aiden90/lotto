@@ -1,6 +1,6 @@
 import { useState } from "react";
-import styled, { keyframes } from "styled-components";
-import { Radio, Button } from "antd";
+import styled from "styled-components";
+import { Radio } from "antd";
 import Layout from "@components/Layout";
 import { useRouter } from "next/router";
 import LottoGenService from "@service/LottoGenService";
@@ -15,7 +15,7 @@ const Wrapper = styled.div`
     }
     .sectionName {
         font-size: 2.5rem;
-        margin-bottom : 0;
+        margin-bottom: 0;
     }
     .form {
         display: flex;
@@ -27,14 +27,14 @@ const Wrapper = styled.div`
         margin-bottom: 4px;
         max-width: 300px;
     }
-    .questionWrapper{
-        display : flex;
-        flex-direction : column;
-        justify-content : center;
-        text-align : center;
-        .question-title{
-            margin : 10px 0;
-            font-size : 1.3rem;
+    .questionWrapper {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        text-align: center;
+        .question-title {
+            margin: 10px 0;
+            font-size: 1.3rem;
         }
     }
     .question {
@@ -66,15 +66,15 @@ const Wrapper = styled.div`
             background-color: rgb(46, 86, 179);
             color: white;
             padding: 5px 5px;
-            width : 80px;
-            white-space : nowrap;
+            width: 80px;
+            white-space: nowrap;
             font-weight: 400;
             span {
                 position: relative;
                 top: 1px;
             }
-            &:hover{
-                cursor : pointer;
+            &:hover {
+                cursor: pointer;
             }
         }
     }
@@ -176,7 +176,7 @@ const mockTest: Question[] = [
             {
                 label: "겨울",
                 value: "winter",
-            }
+            },
         ],
     },
     {
@@ -198,7 +198,7 @@ const mockTest: Question[] = [
             {
                 label: "부",
                 value: "wealth",
-            }
+            },
         ],
     },
 ];
@@ -210,13 +210,18 @@ export default function Home() {
     const [opacity, setOpacity] = useState(true);
     const submitForm = async () => {
         try {
-            const quote = psyTest.reduce((prev, cur)=>prev + cur?.selected?.toString(), "");
-            const generatedNumbers: number[] = await LottoGenService.genNumbersByQuote(quote);
+            const quote = psyTest.reduce(
+                (prev, cur) => prev + cur?.selected?.toString(),
+                "",
+            );
+            const generatedNumbers: number[] = await LottoGenService.genNumbersByQuote(
+                quote,
+            );
             // const generatedNumbers = [1,2,3,4,5,6];
             router.push({
-                pathname: '/result',
+                pathname: "/result",
                 query: { generatedNumbers },
-            })
+            });
         } catch (err) {
             console.log(err);
         }
@@ -268,15 +273,19 @@ export default function Home() {
                         )}
                         {questionId === psyTest[psyTest.length - 1].id ? (
                             <div
-                            className="nextBtn navBtn"
-                            onClick={submitForm}>
+                                className="nextBtn navBtn"
+                                onClick={submitForm}
+                            >
                                 <span>결과 보기</span>
                             </div>
                         ) : (
                             <div
                                 onClick={() => {
-                                    if(!question.selected || typeof question.selected === 'undefined'){
-                                        alert("답변을 골라주세요.")
+                                    if (
+                                        !question.selected ||
+                                        typeof question.selected === "undefined"
+                                    ) {
+                                        alert("답변을 골라주세요.");
                                         return;
                                     }
                                     setOpacity(false);
