@@ -28,8 +28,8 @@ const BallComp = styled.div<{ ballColor: string; delay: number }>`
     .ball-container {
         position: relative;
         display: inline-block;
-        width: 50px;
-        height: 50px;
+        width: 40px;
+        height: 40px;
         z-index: 2;
         transform: scale(0);
         animation: ${BallAnimation} 1s ease-out forwards;

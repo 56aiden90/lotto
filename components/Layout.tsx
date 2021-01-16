@@ -17,6 +17,11 @@ const Header = styled.header`
     justify-content: center;
 `;
 const Main = styled.main`
+    &.mobile {
+        .main-content {
+            max-width: 400px;
+        }
+    }
     .main-content {
         min-height: 100vh;
         min-height: calc(100vh - 80px);
@@ -25,20 +30,32 @@ const Main = styled.main`
         padding: 16px;
     }
 `;
+export const AppTitle = styled.h1`
+    text-align: center;
+    font-size: 2.2rem;
+    line-height: 2.2rem;
+    margin-bottom: 10px;
+`;
+export const PageTitle = styled.h2`
+    text-align: center;
+    font-size: 1.6rem;
+    line-height: 1.6rem;
+    margin-bottom: 20px;
+`;
 
 const Layout = ({
-  title = "육성장군",
-  pageTitle = "육성 장군",
-  mainStyle,
-  header,
-  ...props
+    title = "육성장군",
+    pageTitle,
+    mainStyle,
+    header,
+    ...props
 }: Props) => {
     return (
         <>
             <Head>
                 <title>{title}</title>
             </Head>
-            {header === undefined ? <Header>{pageTitle}</Header> : header}
+            {header ? header : pageTitle ? <Header>{pageTitle}</Header> : null}
             <Main {...props}>
                 <div className="main-content" style={mainStyle}>
                     {props.children}

@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import styled, { keyframes } from "styled-components";
 import { Radio, Button } from "antd";
-import Layout from "@components/Layout";
+import Layout, { AppTitle, PageTitle } from "@components/Layout";
 import Result from "@components/Result";
 import Wrapper from "@components/Wrapper";
 import { useRouter } from "next/router";
@@ -195,8 +195,9 @@ export default function Home() {
 
     return (
         <Layout>
+            <AppTitle>육성장군</AppTitle>
+            <PageTitle>심리테스트로 만들기</PageTitle>
             <PsyWrapper>
-                <h1 className="sectionName">심리테스트로 만들기</h1>
                 {lottoResult ? (
                     <Result className="result" result={lottoResult}></Result>
                 ) : (

@@ -1,39 +1,26 @@
 import styled from "styled-components";
 import { Button } from "antd";
-import Layout from "@components/Layout";
+import Layout, { AppTitle, PageTitle } from "@components/Layout";
 import Link from "next/link";
 
 const Wrapper = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
     & > img {
-        width: 300px;
+        width: 100%;
         margin-bottom: 20px;
     }
     & > button {
         display: block;
         width: 100%;
         margin-bottom: 4px;
-        max-width: 300px;
-    }
-    & > h1 {
-        font-size: 4rem;
-        line-height: 4.2rem;
-        margin: 36px 0 0;
-    }
-    & > p.desc {
-        font-size: 1.5rem;
-        margin-bottom: 20px;
     }
 `;
 
 export default function Home() {
     return (
-        <Layout header={null}>
+        <Layout header={null} className="mobile">
+            <AppTitle>육성장군</AppTitle>
+            <PageTitle>랜선철학관</PageTitle>
             <Wrapper>
-                <h1>육성장군</h1>
-                <p className="desc">랜선철학관</p>
                 <img src="/images/main.png" alt="하하" />
                 <Link href="/gen/birth">
                     <Button size="large">생년월일/이름으로 로또번호생성</Button>

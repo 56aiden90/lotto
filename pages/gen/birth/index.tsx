@@ -1,17 +1,17 @@
 import { useContext, useState } from "react";
 import styled from "styled-components";
 import { Button, Input, Select } from "antd";
-import Layout from "@components/Layout";
+import Layout, { AppTitle, PageTitle } from "@components/Layout";
 import { AppContext } from "@lib/context";
 import Axios from "axios";
 import Result from "@components/Result";
 import { RESULT_TYPE } from "@lib/enums";
 import { BirthResult, LottoResult } from "@lib/types";
 import Wrapper from "@components/Wrapper";
-const {Option} = Select;
+const { Option } = Select;
 const BirthWrapper = styled(Wrapper)`
-    .result{
-        margin : 20px 0;
+    .result {
+        margin: 20px 0;
     }
     .name {
         font-size: 20px;
@@ -28,6 +28,7 @@ const BirthWrapper = styled(Wrapper)`
             margin-right: 4px;
             &:last-child {
                 margin-right: 0;
+            }
         }
     }
 `;
@@ -49,30 +50,33 @@ const Birth = () => {
         if (!month) return appMessage.warn("월을 선택해주세요.");
         if (!date) return appMessage.warn("일을 선택해주세요.");
 
-        const birth = `${year}-${month}-${date}`;
+        const birth = `${year}-${month < 10 ? "0" + month : month}-${
+            date < 10 ? "0" + date : date
+        }`;
         const url = `https://lotto-api.superposition.link/main?string=${encodeURIComponent(
             name + birth,
         )}`;
         Axios.get(url, { headers: { passwd: "gworld" } })
             .then(({ data }) => {
                 const birthResult: BirthResult = {
-                    type : RESULT_TYPE.BIRTH,
-                    numbers : data.res,
+                    type: RESULT_TYPE.BIRTH,
+                    numbers: data.res,
                     birth,
-                    name
-                }
+                    name,
+                };
                 setLottoResult(birthResult);
             })
             .catch((err) => {
                 appMessage.error("서버 내부 에러");
                 console.error(err);
             })
-        .finally(() => setLoading(false));
+            .finally(() => setLoading(false));
     };
     return (
-        <Layout pageTitle="육성장군">
+        <Layout>
+            <AppTitle>육성장군</AppTitle>
+            <PageTitle>이름 / 생일로 만들기</PageTitle>
             <BirthWrapper>
-                <h1 className="sectionName">이름 / 생일로 만들기</h1>
                 {lottoResult ? (
                     <>
                         <Result result={lottoResult}></Result>
@@ -144,8 +148,8 @@ const Birth = () => {
                         >
                             번호 생성
                         </Button>
-                        </>
-                    )}
+                    </>
+                )}
             </BirthWrapper>
         </Layout>
     );

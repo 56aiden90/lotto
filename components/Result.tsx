@@ -16,18 +16,19 @@ const Wrapper = styled.div`
     .ballWrapper {
         display: flex;
         justify-content: center;
-        margin-bottom : 20px;
+        margin: 20px 0 40px;
     }
     .title {
-        font-size: 2rem;
+        font-size: 1.2rem;
+        line-height: 1.2rem;
         text-align: center;
         width: 100%;
     }
 `;
 
 interface Props {
-    result: LottoResult,
-    className? : string
+    result: LottoResult;
+    className?: string;
 }
 
 const Result = ({ result, ...props }: Props) => {
@@ -40,16 +41,20 @@ const Result = ({ result, ...props }: Props) => {
     } else {
         const title =
             result.type === RESULT_TYPE.BIRTH
-                ? `${result.birth}년생 ${result.name}님의 추천번호`
+                ? `${result.birth} / ${result.name}님의 추천번호`
                 : result.type === RESULT_TYPE.PSY
-                    ? "심리테스트 추천 로또번호"
-                    : `${result.quote} 글귀 로또번호`;
+                ? "심리테스트 추천 로또번호"
+                : `${result.quote} 글귀 로또번호`;
         return (
             <Wrapper className={props.className}>
                 <h1 className="title">{title}</h1>
                 <div className="ballWrapper">
                     {result.numbers.map((n, index) => (
-                        <Ball key={index} delay={300 + index * 100} number={n}></Ball>
+                        <Ball
+                            key={index}
+                            delay={300 + index * 100}
+                            number={n}
+                        ></Ball>
                     ))}
                 </div>
                 <ShareButton />
