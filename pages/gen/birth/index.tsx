@@ -19,6 +19,17 @@ const BirthWrapper = styled(Wrapper)`
     .numbers {
         margin: 20px 0;
     }
+    .row {
+        display: flex;
+        align-items: center;
+        & > * {
+            text-align: left;
+            flex: 1 0 0;
+            margin-right: 4px;
+            &:last-child {
+                margin-right: 0;
+        }
+    }
 `;
 
 const Birth = () => {
