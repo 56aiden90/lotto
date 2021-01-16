@@ -1,6 +1,7 @@
 import Head from "next/head";
 import React, { CSSProperties, HTMLAttributes, ReactNode } from "react";
 import styled from "styled-components";
+import Link from 'next/link';
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
     title?: string;
@@ -27,18 +28,18 @@ const Main = styled.main`
 `;
 
 const Layout = ({
-  title = "육성장군",
-  pageTitle = "육성 장군",
-  mainStyle,
-  header,
-  ...props
+    title = "육성장군",
+    pageTitle = "육성장군",
+    mainStyle,
+    header,
+    ...props
 }: Props) => {
     return (
         <>
             <Head>
                 <title>{title}</title>
             </Head>
-            {header === undefined ? <Header>{pageTitle}</Header> : header}
+            {header === undefined ? <Header><Link href="/">{pageTitle}</Link></Header> : header}
             <Main {...props}>
                 <div className="main-content" style={mainStyle}>
                     {props.children}
