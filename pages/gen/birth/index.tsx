@@ -4,19 +4,20 @@ import { Button, Input, Select } from "antd";
 import Layout from "@components/Layout";
 import { AppContext } from "@lib/context";
 import Axios from "axios";
-import Ball from "@components/Ball";
-import { useRouter } from "next/router";
-const { Option } = Select;
-const Wrapper = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    & > * {
-        display: block;
-        width: 100%;
-        margin-bottom: 4px;
-        max-width: 400px;
+import Result from "@components/Result";
+import { RESULT_TYPE } from "@lib/enums";
+import { BirthResult, LottoResult } from "@lib/types";
+import Wrapper from "@components/Wrapper";
+const {Option} = Select;
+const BirthWrapper = styled(Wrapper)`
+    .result{
+        margin : 20px 0;
+    }
+    .name {
+        font-size: 20px;
+    }
+    .numbers {
+        margin: 20px 0;
     }
     .row {
         display: flex;
@@ -27,23 +28,11 @@ const Wrapper = styled.div`
             margin-right: 4px;
             &:last-child {
                 margin-right: 0;
-            }
         }
-    }
-    .name {
-        font-size: 20px;
-    }
-    .numbers {
-        margin: 20px 0;
-    }
-    .sectionName {
-        font-size: 2.5rem;
-        margin-bottom: 0;
     }
 `;
 
 const Birth = () => {
-    const router = useRouter();
     const { appMessage } = useContext(AppContext);
     const [name, setName] = useState("");
 
@@ -52,7 +41,7 @@ const Birth = () => {
     const [date, setDate] = useState<number>();
 
     const [loading, setLoading] = useState(false);
-    const [numbers, setNumbers] = useState<number[]>();
+    const [lottoResult, setLottoResult] = useState<LottoResult | null>(null);
     const genLottoNumber = () => {
         if (name.length < 2)
             return appMessage.warn("이름은 2글자 이상 입력해주세요.");
@@ -66,38 +55,32 @@ const Birth = () => {
         )}`;
         Axios.get(url, { headers: { passwd: "gworld" } })
             .then(({ data }) => {
-                setNumbers(data.res);
+                const birthResult: BirthResult = {
+                    type : RESULT_TYPE.BIRTH,
+                    numbers : data.res,
+                    birth,
+                    name
+                }
+                setLottoResult(birthResult);
             })
             .catch((err) => {
                 appMessage.error("서버 내부 에러");
                 console.error(err);
-            });
-        // .finally(() => setLoading(false));
+            })
+        .finally(() => setLoading(false));
     };
     return (
         <Layout pageTitle="육성장군">
-            <Wrapper>
+            <BirthWrapper>
                 <h1 className="sectionName">이름 / 생일로 만들기</h1>
-                {numbers ? (
+                {lottoResult ? (
                     <>
-                        <span className="birth">
-                            {/* {birthDate?.format("YYYY년 MM월 DD일생")} */}
-                        </span>
-                        <span className="name">{name} 님의 번호</span>
-                        <div className="numbers">
-                            {numbers.map((number, index) => (
-                                <Ball
-                                    key={index}
-                                    delay={300 + index * 100}
-                                    number={number}
-                                ></Ball>
-                            ))}
-                        </div>
+                        <Result result={lottoResult}></Result>
                         <Button
                             size="large"
                             onClick={() => {
                                 // setBirthDate(null);
-                                setNumbers(undefined);
+                                setLottoResult(null);
                             }}
                             type="primary"
                         >
@@ -161,9 +144,9 @@ const Birth = () => {
                         >
                             번호 생성
                         </Button>
-                    </>
-                )}
-            </Wrapper>
+                        </>
+                    )}
+            </BirthWrapper>
         </Layout>
     );
 };
