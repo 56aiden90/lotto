@@ -2,32 +2,19 @@ import { useState, useRef, useEffect } from "react";
 import styled, { keyframes } from "styled-components";
 import { Radio, Button } from "antd";
 import Layout from "@components/Layout";
+import Result from "@components/Result";
+import Wrapper from "@components/Wrapper";
 import { useRouter } from "next/router";
 import LottoGenService from "@service/LottoGenService";
 import Question from "@model/Question";
 import { RESULT_TYPE } from "@lib/enums";
-import { PsyResult } from "@lib/types";
+import { PsyResult, LottoResult } from "@lib/types";
+import PsyTest from '@lib/PsyTest'
 
-const Wrapper = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    h1 {
-        text-align: center;
-    }
-    .sectionName {
-        font-size: 2.5rem;
-        margin-bottom: 0;
-    }
+const PsyWrapper = styled(Wrapper)`
     .form {
         display: flex;
         flex-direction: column;
-    }
-    & > * {
-        display: block;
-        width: 100%;
-        margin-bottom: 4px;
-        max-width: 300px;
     }
     .questionWrapper {
         display: flex;
@@ -70,136 +57,21 @@ const Wrapper = styled.div`
             cursor : pointer;
         }
     }
+    .result{
+        margin : 20px 0;
+    }
     @media only screen and (min-width: 768px) {
     }
 `;
 
-const mockTest: Question[] = [
-    {
-        id: 1,
-        title: "가장 좋아하는 색깔을 골라주세요",
-        options: [
-            {
-                label: "빨강",
-                value: "red",
-            },
-            {
-                label: "파랑",
-                value: "blue",
-            },
-            {
-                label: "초록",
-                value: "green",
-            },
-            {
-                label: "보라",
-                value: "purple",
-            },
-        ],
-    },
-    {
-        id: 2,
-        title: "다시 태어난다면 어느 대륙 사람으로 태어나고 싶으신가요?",
-        options: [
-            {
-                label: "아시아",
-                value: "asia",
-            },
-            {
-                label: "북미",
-                value: "northAmerica",
-            },
-            {
-                label: "남미",
-                value: "southAmerica",
-            },
-            {
-                label: "유럽",
-                value: "europe",
-            },
-            {
-                label: "아프리카",
-                value: "africa",
-            },
-        ],
-    },
-    {
-        id: 3,
-        title: "오늘의 기분을 5점 만점 점수로 표현한다면?",
-        options: [
-            {
-                label: "1점",
-                value: "1",
-            },
-            {
-                label: "2점",
-                value: "2",
-            },
-            {
-                label: "3점",
-                value: "3",
-            },
-            {
-                label: "4점",
-                value: "4",
-            },
-            {
-                label: "5점",
-                value: "5",
-            },
-        ],
-    },
-    {
-        id: 4,
-        title: "가장 좋아하는 계절을 골라주세요",
-        options: [
-            {
-                label: "봄",
-                value: "spring",
-            },
-            {
-                label: "여름",
-                value: "summer",
-            },
-            {
-                label: "가을",
-                value: "fall",
-            },
-            {
-                label: "겨울",
-                value: "winter",
-            },
-        ],
-    },
-    {
-        id: 5,
-        title: "다음 중 가장 마음에 드는 단어를 골라주세요",
-        options: [
-            {
-                label: "갱생",
-                value: "rebirth",
-            },
-            {
-                label: "성공",
-                value: "success",
-            },
-            {
-                label: "권력",
-                value: "power",
-            },
-            {
-                label: "부",
-                value: "wealth",
-            },
-        ],
-    },
-];
+
 
 export default function Home() {
-    const router = useRouter();
-    const [psyTest, setPsyTest] = useState(mockTest);
+    const [psyTest, setPsyTest] = useState(PsyTest);
     const [questionId, setQuestionId] = useState(psyTest[0].id);
     const selectElement = useRef<HTMLDivElement>(null);
+    const [lottoResult, setLottoResult] = useState<LottoResult | null>(null);
+    const [loading, setLoading] = useState(false);
     const animationTiming = {
         duration: 300,
     }
@@ -210,18 +82,24 @@ export default function Home() {
 
     const submitForm = async () => {
         try {
+            if (loading) return;
+            setLoading(true);
+            if (!psyTest[psyTest.length - 1]?.selected || typeof psyTest[psyTest.length - 1]?.selected === 'undefined') {
+                alert("답변을 골라주세요.")
+                return;
+            }
             const quote = psyTest.reduce((prev, cur) => prev + cur?.selected?.toString(), "");
             const numbers: number[] = await LottoGenService.genNumbersByQuote(quote);
-            router.push({
-                pathname: "/result",
-                query: {
-                    numbers,
-                    type : RESULT_TYPE.PSY
-                },
-            });
+            const psyResult: PsyResult = {
+                numbers,
+                type: RESULT_TYPE.PSY
+            }
+            setLottoResult(psyResult);
         } catch (err) {
             alert("번호 생성 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.")
             console.log(err);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -234,6 +112,7 @@ export default function Home() {
                 ) : (
                         <div
                             onClick={() => {
+                                if (loading) return;
                                 selectElement?.current?.animate(fadeInAnimation, animationTiming);
                                 setQuestionId(questionId - 1);
                             }}
@@ -251,6 +130,7 @@ export default function Home() {
                 ) : (
                         <div
                             onClick={() => {
+                                if (loading) return;
                                 if (!question?.selected || typeof question?.selected === 'undefined') {
                                     alert("답변을 골라주세요.")
                                     return;
@@ -300,11 +180,16 @@ export default function Home() {
 
     return (
         <Layout>
-            <Wrapper>
+            <PsyWrapper>
                 <h1 className="sectionName">심리테스트로 만들기</h1>
-                <div ref={selectElement} className="form">{renderQuestion()}</div>
-                {renderQuestionNav()}
-            </Wrapper>
+                {lottoResult ? <Result className="result" result={lottoResult}></Result>
+                    :
+                    <>
+                        <div ref={selectElement} className="form">{renderQuestion()}</div>
+                        {renderQuestionNav()}
+                    </>
+                }
+            </PsyWrapper>
         </Layout>
     );
 }
