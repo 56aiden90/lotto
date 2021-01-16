@@ -9,7 +9,7 @@ import LottoGenService from "@service/LottoGenService";
 import Question from "@model/Question";
 import { RESULT_TYPE } from "@lib/enums";
 import { PsyResult, LottoResult } from "@lib/types";
-import PsyTest from '@lib/PsyTest'
+import PsyTest from "@lib/PsyTest";
 
 const PsyWrapper = styled(Wrapper)`
     .form {
@@ -54,17 +54,15 @@ const PsyWrapper = styled(Wrapper)`
                 position: relative;
                 top: 1px;
             }
-            cursor : pointer;
+            cursor: pointer;
         }
     }
-    .result{
-        margin : 20px 0;
+    .result {
+        margin: 20px 0;
     }
     @media only screen and (min-width: 768px) {
     }
 `;
-
-
 
 export default function Home() {
     const [psyTest, setPsyTest] = useState(PsyTest);
@@ -74,29 +72,36 @@ export default function Home() {
     const [loading, setLoading] = useState(false);
     const animationTiming = {
         duration: 300,
-    }
-    const fadeInAnimation = [
-        { opacity: 0 },
-        { opacity: 1 }
-    ];
+    };
+    const fadeInAnimation = [{ opacity: 0 }, { opacity: 1 }];
 
     const submitForm = async () => {
         try {
             if (loading) return;
             setLoading(true);
-            if (!psyTest[psyTest.length - 1]?.selected || typeof psyTest[psyTest.length - 1]?.selected === 'undefined') {
-                alert("답변을 골라주세요.")
+            if (
+                !psyTest[psyTest.length - 1]?.selected ||
+                typeof psyTest[psyTest.length - 1]?.selected === "undefined"
+            ) {
+                alert("답변을 골라주세요.");
                 return;
             }
-            const quote = psyTest.reduce((prev, cur) => prev + cur?.selected?.toString(), "");
-            const numbers: number[] = await LottoGenService.genNumbersByQuote(quote);
+            const quote = psyTest.reduce(
+                (prev, cur) => prev + cur?.selected?.toString(),
+                "",
+            );
+            const numbers: number[] = await LottoGenService.genNumbersByQuote(
+                quote,
+            );
             const psyResult: PsyResult = {
                 numbers,
-                type: RESULT_TYPE.PSY
-            }
+                type: RESULT_TYPE.PSY,
+            };
             setLottoResult(psyResult);
         } catch (err) {
-            alert("번호 생성 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.")
+            alert(
+                "번호 생성 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.",
+            );
             console.log(err);
         } finally {
             setLoading(false);
@@ -104,47 +109,57 @@ export default function Home() {
     };
 
     const renderQuestionNav = () => {
-        const question: Question | undefined = psyTest.find(q => q.id === questionId);
+        const question: Question | undefined = psyTest.find(
+            (q) => q.id === questionId,
+        );
         return (
             <div className="navWrapper">
                 {questionId === psyTest[0].id ? (
                     <div />
                 ) : (
-                        <div
-                            onClick={() => {
-                                if (loading) return;
-                                selectElement?.current?.animate(fadeInAnimation, animationTiming);
-                                setQuestionId(questionId - 1);
-                            }}
-                            className="prevBtn navBtn"
-                        >
-                            <span>이전</span>
-                        </div>
-                    )}
-                {questionId === psyTest[psyTest.length - 1].id ? (
                     <div
-                        className="nextBtn navBtn"
-                        onClick={submitForm}>
+                        onClick={() => {
+                            if (loading) return;
+                            selectElement?.current?.animate(
+                                fadeInAnimation,
+                                animationTiming,
+                            );
+                            setQuestionId(questionId - 1);
+                        }}
+                        className="prevBtn navBtn"
+                    >
+                        <span>이전</span>
+                    </div>
+                )}
+                {questionId === psyTest[psyTest.length - 1].id ? (
+                    <div className="nextBtn navBtn" onClick={submitForm}>
                         <span>결과 보기</span>
                     </div>
                 ) : (
-                        <div
-                            onClick={() => {
-                                if (loading) return;
-                                if (!question?.selected || typeof question?.selected === 'undefined') {
-                                    alert("답변을 골라주세요.")
-                                    return;
-                                }
-                                selectElement?.current?.animate(fadeInAnimation, animationTiming);
-                                setQuestionId(questionId + 1);
-                            }}
-                            className="nextBtn navBtn"
-                        >
-                            <span>다음</span>
-                        </div>
-                    )}
-            </div>)
-    }
+                    <div
+                        onClick={() => {
+                            if (loading) return;
+                            if (
+                                !question?.selected ||
+                                typeof question?.selected === "undefined"
+                            ) {
+                                alert("답변을 골라주세요.");
+                                return;
+                            }
+                            selectElement?.current?.animate(
+                                fadeInAnimation,
+                                animationTiming,
+                            );
+                            setQuestionId(questionId + 1);
+                        }}
+                        className="nextBtn navBtn"
+                    >
+                        <span>다음</span>
+                    </div>
+                )}
+            </div>
+        );
+    };
 
     const renderQuestion = () => {
         return psyTest.map((question, index) => {
@@ -162,7 +177,7 @@ export default function Home() {
                 );
             };
             return (
-                <div className="questionWrapper">
+                <div className="questionWrapper" key={index}>
                     <p className="question-title">{question.title}</p>
                     <Radio.Group
                         className={`question`}
@@ -182,13 +197,16 @@ export default function Home() {
         <Layout>
             <PsyWrapper>
                 <h1 className="sectionName">심리테스트로 만들기</h1>
-                {lottoResult ? <Result className="result" result={lottoResult}></Result>
-                    :
+                {lottoResult ? (
+                    <Result className="result" result={lottoResult}></Result>
+                ) : (
                     <>
-                        <div ref={selectElement} className="form">{renderQuestion()}</div>
+                        <div ref={selectElement} className="form">
+                            {renderQuestion()}
+                        </div>
                         {renderQuestionNav()}
                     </>
-                }
+                )}
             </PsyWrapper>
         </Layout>
     );
