@@ -7,6 +7,9 @@ const Wrapper = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
+    & > img {
+        width: 300px;
+    }
     & > button {
         display: block;
         width: 100%;
@@ -34,7 +37,7 @@ export default function Home() {
             <Wrapper>
                 <h1>육성장군</h1>
                 <p className="desc">사주-작성-운세 랜선철학관</p>
-                {/* <img src="/images/main.png" alt="me" /> */}
+                <img src="/images/main.png" alt="하하" />
                 <p className="comment">메뉴를 골라보시게</p>
                 <Link href="/gen/birth">
                     <Button size="large">생년월일/이름으로 로또번호생성</Button>
