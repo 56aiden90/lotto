@@ -1,6 +1,6 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import styled, { keyframes } from "styled-components";
-import { Radio, Button } from "antd";
+import { Radio, Button, Anchor } from "antd";
 import Layout, { AppTitle, PageTitle } from "@components/Layout";
 import Result from "@components/Result";
 import Wrapper from "@components/Wrapper";
@@ -60,6 +60,14 @@ const PsyWrapper = styled(Wrapper)`
     .result {
         margin: 20px 0;
     }
+
+    .resetBtn{
+        padding-right : 5px;
+        text-align : right;
+        cursor : pointer;
+        color : rgb(30, 50, 140);
+    }
+
     @media only screen and (min-width: 768px) {
     }
 `;
@@ -74,6 +82,11 @@ export default function Home() {
         duration: 300,
     };
     const fadeInAnimation = [{ opacity: 0 }, { opacity: 1 }];
+    useEffect(()=>{
+        return ()=>{
+            reset();
+        }
+    },[])
 
     const submitForm = async () => {
         try {
@@ -108,7 +121,7 @@ export default function Home() {
         }
     };
 
-    const renderQuestionNav = () => {
+    const renderQuestionNav = useCallback(() => {
         const question: Question | undefined = psyTest.find(
             (q) => q.id === questionId,
         );
@@ -117,51 +130,59 @@ export default function Home() {
                 {questionId === psyTest[0].id ? (
                     <div />
                 ) : (
-                    <div
-                        onClick={() => {
-                            if (loading) return;
-                            selectElement?.current?.animate(
-                                fadeInAnimation,
-                                animationTiming,
-                            );
-                            setQuestionId(questionId - 1);
-                        }}
-                        className="prevBtn navBtn"
-                    >
-                        <span>이전</span>
-                    </div>
-                )}
+                        <div
+                            onClick={() => {
+                                if (loading) return;
+                                selectElement?.current?.animate(
+                                    fadeInAnimation,
+                                    animationTiming,
+                                );
+                                setQuestionId(questionId - 1);
+                            }}
+                            className="prevBtn navBtn"
+                        >
+                            <span>이전</span>
+                        </div>
+                    )}
                 {questionId === psyTest[psyTest.length - 1].id ? (
                     <div className="nextBtn navBtn" onClick={submitForm}>
                         <span>결과 보기</span>
                     </div>
                 ) : (
-                    <div
-                        onClick={() => {
-                            if (loading) return;
-                            if (
-                                !question?.selected ||
-                                typeof question?.selected === "undefined"
-                            ) {
-                                alert("답변을 골라주세요.");
-                                return;
-                            }
-                            selectElement?.current?.animate(
-                                fadeInAnimation,
-                                animationTiming,
-                            );
-                            setQuestionId(questionId + 1);
-                        }}
-                        className="nextBtn navBtn"
-                    >
-                        <span>다음</span>
-                    </div>
-                )}
+                        <div
+                            onClick={() => {
+                                if (loading) return;
+                                if (
+                                    !question?.selected ||
+                                    typeof question?.selected === "undefined"
+                                ) {
+                                    alert("답변을 골라주세요.");
+                                    return;
+                                }
+                                selectElement?.current?.animate(
+                                    fadeInAnimation,
+                                    animationTiming,
+                                );
+                                setQuestionId(questionId + 1);
+                            }}
+                            className="nextBtn navBtn"
+                        >
+                            <span>다음</span>
+                        </div>
+                    )}
             </div>
         );
-    };
+    }, [questionId, psyTest]);
 
-    const renderQuestion = () => {
+    const reset = () => {
+
+        setPsyTest(psyTest.map(question => {
+            delete question.selected;
+            return question;
+        }));
+        setQuestionId(PsyTest[0].id);
+    };
+    const renderQuestion = useCallback(() => {
         return psyTest.map((question, index) => {
             if (question.id !== questionId) {
                 return null;
@@ -179,6 +200,12 @@ export default function Home() {
             return (
                 <div className="questionWrapper" key={index}>
                     <p className="question-title">{question.title}</p>
+                    <p
+                        className="resetBtn"
+                        onClick={reset}
+                    >
+                        초기화
+                    </p>
                     <Radio.Group
                         className={`question`}
                         options={question.options}
@@ -191,7 +218,9 @@ export default function Home() {
                 </div>
             );
         });
-    };
+    }, [questionId, psyTest]);
+
+
 
     return (
         <Layout>
@@ -199,15 +228,17 @@ export default function Home() {
             <PageTitle>심리테스트로 만들기</PageTitle>
             <PsyWrapper>
                 {lottoResult ? (
-                    <Result className="result" result={lottoResult}></Result>
-                ) : (
                     <>
-                        <div ref={selectElement} className="form">
-                            {renderQuestion()}
-                        </div>
-                        {renderQuestionNav()}
+                        <Result className="result" result={lottoResult}></Result>
                     </>
-                )}
+                ) : (
+                        <>
+                            <div ref={selectElement} className="form">
+                                {renderQuestion()}
+                            </div>
+                            {renderQuestionNav()}
+                        </>
+                    )}
             </PsyWrapper>
         </Layout>
     );

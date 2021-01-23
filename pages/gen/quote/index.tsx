@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styled from "styled-components";
 import { Button, Input } from "antd";
 import Wrapper from "@components/Wrapper";
@@ -19,6 +19,12 @@ const QuoteWrapper = styled(Wrapper)`
         margin: 20px 0;
     }
 
+    .resetBtn{
+        text-align : right;
+        cursor : pointer;
+        color : rgb(30, 50, 140);
+    }
+
     @media only screen and (min-width: 768px) {
     }
 `;
@@ -27,6 +33,17 @@ export default function Home() {
     const [quote, setQuote] = useState<string>("");
     const [lottoResult, setLottoResult] = useState<LottoResult | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
+    // useEffect(() => {
+    // TODO : This is not working. Fix it.
+    //     const listener:any = window.addEventListener('popstate', (event) => {
+    //         if (lottoResult) {
+    //             event.preventDefault();
+    //             setLottoResult(null);
+    //         }
+    //     });
+
+    //     return () => { window.removeEventListener('popstate', listener) }
+    // }, []);
     const submitForm = async () => {
         try {
             if (loading) return;
@@ -51,6 +68,10 @@ export default function Home() {
         }
     };
 
+    const reset = () => {
+        setQuote("");
+    }
+
     return (
         <Layout>
             <AppTitle>육성장군</AppTitle>
@@ -63,26 +84,32 @@ export default function Home() {
                             result={lottoResult}
                         ></Result>
                     ) : (
-                        <>
-                            <Input.TextArea
-                                disabled={loading}
-                                className="quote-input"
-                                size="large"
-                                placeholder="나만의 문구 입력"
-                                value={quote}
-                                maxLength={100}
-                                onChange={(e) => setQuote(e.target.value)}
-                            />
-                            <Button
-                                className="gen-button"
-                                size="large"
-                                type="primary"
-                                onClick={submitForm}
-                            >
-                                번호 생성
+                            <>
+                                <p
+                                    className="resetBtn"
+                                    onClick={reset}
+                                >
+                                    초기화
+                            </p>
+                                <Input.TextArea
+                                    disabled={loading}
+                                    className="quote-input"
+                                    size="large"
+                                    placeholder="나만의 문구 입력"
+                                    value={quote}
+                                    maxLength={100}
+                                    onChange={(e) => setQuote(e.target.value)}
+                                />
+                                <Button
+                                    className="gen-button"
+                                    size="large"
+                                    type="primary"
+                                    onClick={submitForm}
+                                >
+                                    번호 생성
                             </Button>
-                        </>
-                    )}
+                            </>
+                        )}
                 </div>
             </QuoteWrapper>
         </Layout>

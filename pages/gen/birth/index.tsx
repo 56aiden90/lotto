@@ -31,6 +31,12 @@ const BirthWrapper = styled(Wrapper)`
             }
         }
     }
+
+    .resetBtn{
+        text-align : right;
+        cursor : pointer;
+        color : rgb(30, 50, 140);
+    }
 `;
 
 const Birth = () => {
@@ -43,6 +49,12 @@ const Birth = () => {
 
     const [loading, setLoading] = useState(false);
     const [lottoResult, setLottoResult] = useState<LottoResult | null>(null);
+    const reset = () => {
+        setName("");
+        setYear(undefined);
+        setMonth(undefined);
+        setDate(undefined);
+    }
     const genLottoNumber = () => {
         if (name.length < 2)
             return appMessage.warn("이름은 2글자 이상 입력해주세요.");
@@ -53,6 +65,12 @@ const Birth = () => {
         const birth = `${year}-${month < 10 ? "0" + month : month}-${
             date < 10 ? "0" + date : date
         }`;
+        const now = new Date();
+        const birthDateObj = new Date(birth);
+        if(now < birthDateObj){
+            return appMessage.warn("올바른 생년월일을 입력해주세요");
+        }
+
         const url = `https://lotto-api.superposition.link/main?string=${encodeURIComponent(
             name + birth,
         )}`;
@@ -80,19 +98,15 @@ const Birth = () => {
                 {lottoResult ? (
                     <>
                         <Result result={lottoResult}></Result>
-                        <Button
-                            size="large"
-                            onClick={() => {
-                                // setBirthDate(null);
-                                setLottoResult(null);
-                            }}
-                            type="primary"
-                        >
-                            다시하기
-                        </Button>
                     </>
                 ) : (
                     <>
+                        <p
+                            className="resetBtn"
+                            onClick={reset}
+                        >
+                            초기화
+                        </p>
                         <Input
                             size="large"
                             placeholder="이름"
